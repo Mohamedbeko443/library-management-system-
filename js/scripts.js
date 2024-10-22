@@ -1,7 +1,10 @@
-const base = "nk25fpg7-7170.uks1.devtunnels.ms"
-
+const base = "vh70k80x-7170.uks1.devtunnels.ms";
 setupUI();
 getBooks();
+
+
+
+
 
 
 
@@ -126,13 +129,15 @@ function loginBtnClicked() {
 
 
 
-
+// todo
 function setupUI() {
     const token = JSON.parse(localStorage.getItem("data"));
     const loginBtn = document.getElementById("login-btn");
     const registerBtn = document.getElementById("register-btn");
     const logoutBtn = document.getElementById("logout-btn");
     const manageBtn = document.getElementById("manage-link");
+    const profileBtn = document.getElementById("profile-link");
+    
 
 
     if (!token) // user is guest
@@ -141,6 +146,7 @@ function setupUI() {
         registerBtn.style.display = "block";
         logoutBtn.style.display = "none";
         manageBtn.style.display = "none";
+        profileBtn.style.display = "none";
     }
     else if (token.role === "user")
     {
@@ -148,12 +154,14 @@ function setupUI() {
         registerBtn.style.display = "none";
         logoutBtn.style.display = "block";
         manageBtn.style.display = "none";
+        profileBtn.style.display = "block";
     }
     else {
         loginBtn.style.display = "none";
         registerBtn.style.display = "none";
         logoutBtn.style.display = "block";
         manageBtn.style.display = "block";
+        profileBtn.style.display = "block";
     }
 }
 
@@ -190,12 +198,11 @@ function getBooks() {
             console.log(books)
             document.getElementById("books").innerHTML = "";
             for (let book of books) {
-
                 let content = `
             <div class="col mb-5">
                     <div class="card h-100">
                         <!-- Product image-->
-                        <img class="card-img-top" src="https://dummyimage.com/450x300/dee2e6/6c757d.jpg" alt="..." />
+                        <img class="card-img-top img-fluid" style = "height : 200px" src="https://nk25fpg7-7170.uks1.devtunnels.ms/api/Books/GetCover/cover/${book.id}" alt="..." />
                         <!-- Product details-->
                         <div class="card-body p-4">
                             <div class="text-center">
@@ -205,12 +212,12 @@ function getBooks() {
                                 <h6 id="publicationYear">Publication Year : ${book.publicationYear}</h6>
                                 <h6 id="category">Category : <span class="rounded-3 p-1 text-white" style="background-color: red;">${book.category}</span></h6>
                                 <h6 id="available" class="mt-3">Available : <span class=" rounded-3 p-1 text-white" style="background-color: black ;">${book.availableCopies}</span></h6>
-
+                                <h6 id="bookId-${book.id}" style="display: none">${book.id}</h6>
                             </div>
                         </div>
                         <!-- Product actions-->
-                        <div class="card-footer p-4 pt-0 border-top-0 bg-transparent">
-                            <div class="text-center"><a class="btn btn-outline-dark mt-auto" href="#">Loan</a>
+                        <div class="  d-flex justify-content-center card-footer p-4 pt-0 border-top-0 bg-transparent">
+                            <button  class="btn btn-outline-dark  mt-auto" onclick='loanBtnClicked(this.dataset.book)' data-book='${JSON.stringify(book)}' >Loan</button>
                             </div>
                         </div>
                     </div>
@@ -257,6 +264,52 @@ function showAlert(message, type) {
 
 
 
+function loanBtnClicked(bookString) {
+    const data = JSON.parse(localStorage.getItem("data"));
+    
+    if (!data || !data.userId) {
+        alert("Please login first");
+        return;
+    }
+
+    let book = JSON.parse(bookString);
+    console.log(book);
+    console.log(data.userId);
+
+    fetch(`https://${base}/api/Loans/AddLone?userId=${data.userId}&bookId=${book.id}&fineAmount=21`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            "Authorization": `Bearer ${data.token}`
+        },
+        body: JSON.stringify({})  
+    })
+    .then((response) => {
+        const contentType = response.headers.get("content-type");
+        if (!response.ok) {
+            // If the response isn't OK and isn't JSON, return text
+            if (contentType && contentType.includes("application/json")) {
+                return response.json().then((err) => Promise.reject(err));
+            } else {
+                return response.text().then((text) => Promise.reject({ message: text }));
+            }
+        }
+        // If response is OK and JSON, parse and return it
+        if (contentType && contentType.includes("application/json")) {
+            return response.json();
+        } else {
+            return response.text().then((text) => Promise.reject({ message: text }));
+        }
+    })
+    .then(() => {
+        alert("Loaned successfully");
+        setupUI();  
+    })
+    .catch((error) => {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        showAlert("Loaned successfully" , "success");
+    });
+}
 
 
 
