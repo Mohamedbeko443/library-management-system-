@@ -1,0 +1,39 @@
+body {
+    background-color: #343a40 !important; /* Dark background */
+}
+
+.form-control {
+    background-color: #495057 !important; /* Dark input field */
+    color: #fff !important;
+    border: 1px solid #6c757d !important; /* Input border */
+}
+
+.form-control::placeholder {
+    color: #adb5bd !important; /* Placeholder color */
+}
+
+.table-dark {
+    background-color: #343a40;
+}
+
+.table-dark th,
+.table-dark td {
+    color: #fff !important; /* Table text */
+}
+
+label {
+    color: #f8f9fa !important; /* Label text color */
+}
+
+h1 {
+    color: #ffffff !important; /* Header text */
+}
+
+.btn-warning {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+}
+
+.btn-warning:hover {
+    background-color: #e0a800 !important;
+}

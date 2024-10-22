@@ -1,5 +1,8 @@
+const base = "nk25fpg7-7170.uks1.devtunnels.ms"
+
 setupUI();
 getBooks();
+
 
 
 function registerBtnClicked() {
@@ -11,9 +14,9 @@ function registerBtnClicked() {
     const password = document.getElementById("register-password-input").value;
 
     console.log(firstName, lastName, username, email, phone, password);
-    
+
     const params = {
-        "firstName": firstName,  
+        "firstName": firstName,
         "lastName": lastName,
         "user_name": username,
         "email": email,
@@ -21,159 +24,174 @@ function registerBtnClicked() {
         "password": password
     };
 
-    fetch("https://g5l1g6nc-7170.uks1.devtunnels.ms/api/Account/Register", {
+    fetch(`https://${base}/api/Account/Register`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(params),
     })
-    .then((response) => {
-        const contentType = response.headers.get("content-type");
-        if (!response.ok) {
-            // If the response isn't OK and isn't JSON, return text
+        .then((response) => {
+            const contentType = response.headers.get("content-type");
+            if (!response.ok) {
+                // If the response isn't OK and isn't JSON, return text
+                if (contentType && contentType.includes("application/json")) {
+                    return response.json().then((err) => Promise.reject(err));
+                } else {
+                    return response.text().then((text) => Promise.reject({ message: text }));
+                }
+            }
+            // If response is OK and JSON, parse and return it
             if (contentType && contentType.includes("application/json")) {
-                return response.json().then((err) => Promise.reject(err));
+                return response.json();
             } else {
                 return response.text().then((text) => Promise.reject({ message: text }));
             }
-        }
-        // If response is OK and JSON, parse and return it
-        if (contentType && contentType.includes("application/json")) {
-            return response.json();
-        } else {
-            return response.text().then((text) => Promise.reject({ message: text }));
-        }
-    })
-    .then((data) => {
-        console.log(data);
-        localStorage.setItem("data", JSON.stringify(data));
-    
-        const modal = document.getElementById("exampleModal2");
-        const modalInstance = bootstrap.Modal.getInstance(modal);
-        modalInstance.hide();
-    
-        alert("Register Successfully");
-        setupUI();
-    })
-    .catch((error) => {
-        const errorMessage = error.message || "Something went wrong. Please try again.";
-        console.error(errorMessage);  // Log error in console
-        alert(errorMessage);  // Show alert to the user
-    });
+        })
+        .then((data) => {
+            console.log(data);
+            localStorage.setItem("data", JSON.stringify(data));
+
+            const modal = document.getElementById("exampleModal2");
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            modalInstance.hide();
+
+            // alert("Register Successfully");
+            showAlert("Register Successfully" , "success");
+            setupUI();
+        })
+        .catch((error) => {
+            const errorMessage = error.message || "Something went wrong. Please try again.";
+            console.error(errorMessage);  
+            // alert(errorMessage);
+            showAlert(errorMessage , "danger");
+        });
 }
 
 
 
-function loginBtnClicked(){
+function loginBtnClicked() {
     const email = document.getElementById("email-input").value;
     const password = document.getElementById("password-input").value;
-    
-    
+
+
     const params = {
-        "email" : email,
-        "password" : password
+        "email": email,
+        "password": password
     };
 
-    fetch("https://g5l1g6nc-7170.uks1.devtunnels.ms/api/Account/Login", {
+    fetch(`https://${base}/api/Account/Login`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify(params),
     })
-    .then((response) => {
-        const contentType = response.headers.get("content-type");
-        if (!response.ok) {
-            // If the response isn't OK and isn't JSON, return text
+        .then((response) => {
+            const contentType = response.headers.get("content-type");
+            if (!response.ok) {
+                // If the response isn't OK and isn't JSON, return text
+                if (contentType && contentType.includes("application/json")) {
+                    return response.json().then((err) => Promise.reject(err));
+                } else {
+                    return response.text().then((text) => Promise.reject({ message: text }));
+                }
+            }
+            // If response is OK and JSON, parse and return it
             if (contentType && contentType.includes("application/json")) {
-                return response.json().then((err) => Promise.reject(err));
+                return response.json();
             } else {
                 return response.text().then((text) => Promise.reject({ message: text }));
             }
-        }
-        // If response is OK and JSON, parse and return it
-        if (contentType && contentType.includes("application/json")) {
-            return response.json();
-        } else {
-            return response.text().then((text) => Promise.reject({ message: text }));
-        }
-    })
-    .then((data) => {
-        console.log(data);
-        localStorage.setItem("data", JSON.stringify(data));
-    
-        const modal = document.getElementById("exampleModal");
-        const modalInstance = bootstrap.Modal.getInstance(modal);
-        modalInstance.hide();
-    
-        alert("login Successfully");
-        setupUI();
-    })
-    .catch((error) => {
-        const errorMessage = error.message || "Something went wrong. Please try again.";
-        console.error(errorMessage);  // Log error in console
-        alert(errorMessage);  // Show alert to the user
-    });
+        })
+        .then((data) => {
+            console.log(data);
+            localStorage.setItem("data", JSON.stringify(data));
+
+            const modal = document.getElementById("exampleModal");
+            const modalInstance = bootstrap.Modal.getInstance(modal);
+            modalInstance.hide();
+
+            // alert("login Successfully");
+            showAlert("login Successfully" , "success");
+            setupUI();
+        })
+        .catch((error) => {
+            const errorMessage = error.message || "Something went wrong. Please try again.";
+            console.error(errorMessage);  
+            // alert(errorMessage);
+            showAlert(errorMessage , "danger");
+        });
 }
 
 
 
 
-function setupUI(){
-    const token = localStorage.getItem("data");
+function setupUI() {
+    const token = JSON.parse(localStorage.getItem("data"));
     const loginBtn = document.getElementById("login-btn");
     const registerBtn = document.getElementById("register-btn");
     const logoutBtn = document.getElementById("logout-btn");
-    
+    const manageBtn = document.getElementById("manage-link");
 
-    if(!token) // user is guest
+
+    if (!token) // user is guest
     {
         loginBtn.style.display = "block";
         registerBtn.style.display = "block";
         logoutBtn.style.display = "none";
+        manageBtn.style.display = "none";
     }
-    else
+    else if (token.role === "user")
     {
         loginBtn.style.display = "none";
         registerBtn.style.display = "none";
         logoutBtn.style.display = "block";
+        manageBtn.style.display = "none";
+    }
+    else {
+        loginBtn.style.display = "none";
+        registerBtn.style.display = "none";
+        logoutBtn.style.display = "block";
+        manageBtn.style.display = "block";
     }
 }
 
 
-function logout(){
+
+function logout() {
     localStorage.removeItem("data");
-    // toaster("logged out successfully!" , "success");
-    alert("logged out successfully!");
+    // alert("logged out successfully!");
+    showAlert("logged out successfully!" , "success");
     setupUI();
 }
 
 
-function getBooks(){
-    fetch("https://g5l1g6nc-7170.uks1.devtunnels.ms/api/Books/GetAll")
-    .then((response) => {
-        // Check if the response is OK (status code 200-299)
-        if (!response.ok) {
-            const contentType = response.headers.get("content-type");
-            if (contentType && contentType.includes("application/json")) {
-                // If it's JSON, parse it and reject the promise
-                return response.json().then((err) => Promise.reject(err));
-            } else {
-                // If it's not JSON, return the response as plain text
-                return response.text().then((text) => Promise.reject({ message: text }));
+
+function getBooks() {
+    fetch(`https://${base}/api/Books/GetAll`)
+        .then((response) => {
+            // Check if the response is OK (status code 200-299)
+            if (!response.ok) {
+                const contentType = response.headers.get("content-type");
+                if (contentType && contentType.includes("application/json")) {
+                    // If it's JSON, parse it and reject the promise
+                    return response.json().then((err) => Promise.reject(err));
+                } else {
+                    // If it's not JSON, return the response as plain text
+                    return response.text().then((text) => Promise.reject({ message: text }));
+                }
             }
-        }
-        // If everything is OK, return the response as JSON
-        return response.json();
-    })
-    .then((data) => {
-        let books = data;
-        console.log(books)
-        document.getElementById("books").innerHTML = "";
-        for (let book of books) {
-            
-            let content = `
+            // If everything is OK, return the response as JSON
+            return response.json();
+        })
+        .then((data) => {
+            let books = data;
+            console.log(books)
+            document.getElementById("books").innerHTML = "";
+            for (let book of books) {
+
+                let content = `
             <div class="col mb-5">
                     <div class="card h-100">
                         <!-- Product image-->
@@ -198,16 +216,47 @@ function getBooks(){
                     </div>
                 </div>
             `;
-            document.getElementById("books").innerHTML += content;
-        }
-    })
-    .catch((error) => {
-        if (error.message) {
-            alert("Error: " + error.message);
-        } else {
-            alert("An unknown error occurred.");
-        }
-        console.error("There was an error!", error);
-    });
+                document.getElementById("books").innerHTML += content;
+            }
+        })
+        .catch((error) => {
+            if (error.message) {
+                // alert("Error: " + error.message);
+                showAlert(error , "danger");
+            } else {
+                // alert("An unknown error occurred.");
+                showAlert("An unknown error occurred" , "danger");
+            }
+            console.error("There was an error!", error);
+        });
 }
+
+
+
+function showAlert(message, type) {
+    // Create a new alert element
+    const alert = document.createElement('div');
+    alert.className = `alert alert-${type} fade show`;
+    alert.role = "alert";
+    alert.innerHTML = `
+    ${message}
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    `;
+
+    
+    const alertContainer = document.getElementById('alert-container');
+    alertContainer.appendChild(alert);
+
+    
+    setTimeout(() => {
+        alert.classList.remove('show');
+        alert.classList.add('fade');
+        setTimeout(() => alert.remove(), 500); 
+    }, 3000);
+}
+
+
+
+
+
 

@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage books</title>
+    <!-- Bootstrap File -->
+    <link rel="stylesheet" href="../css/bootstrap.min.css">
+    <!-- Main CSS File -->
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+
+
+
+
+<body>
+
+
+    <!-- ==========Start Alerts========== -->
+    <div class="alert-container" id="alert-container"></div>
+    <!-- ==========End Alerts========== -->
+
+    <div class="FormControl py-5">
+        <div class="container ">
+            <h1 class="text-center mb-3 ">Manage Books</h1>
+
+            <div class="content">
+                <label for="title">Title :</label>
+                <input class="form-control mb-3" type="text" id="title"  required>
+
+                <label for="author">author :</label>
+                <input class="form-control mb-3" type="text" id="author"  required>
+
+                <label for="publicationYear">publicationYear :</label>
+                <input class="form-control mb-3" type="text" id="publicationYear"  required>
+
+                <label for="category">category :</label>
+                <input class="form-control mb-3" type="text" id="category" " required>
+
+                <label for="numberOfCopies">numberOfCopies :</label>
+                <input class="form-control mb-3" type="number" id="numberOfCopies" " required>
+
+                <label for="availableCopies">availableCopies :</label>
+                <input class="form-control mb-3" type="number" id="availableCopies" " required>
+
+                <label for="coverUrl">coverUrl :</label>
+                <input class="form-control mb-3" type="file" id="coverUrl"  required>
+
+                <div class="buttons text-center mt-4">
+                    <button class="btn btn-warning" onclick="action();" id="addUpdateButton">Add Book</button>
+                </div>
+            </div>
+
+            <div class="search my-5 w-75 mx-auto">
+                <input type="text" class="form-control" id="inputSearch" placeholder="Search"
+                    oninput="search(this.value)">
+            </div>
+
+            <div class="TableData mt-5">
+                <table class=" table  table-striped">
+                    <thead>
+                        <th>Id</th>
+                        <th>Title</th>
+                        <th>author</th>
+                        <th>publicationYear</th>
+                        <th>category</th>
+                        <th>numberOfCopies</th>
+                        <th>availableCopies</th>
+                        <th>Action</th>
+                    </thead>
+                    <tbody id="tableBody">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="../js/bootstrap.bundle.min.js"></script>
+    <script src="../js/admin.js"></script>
+</body>
+
+</html>
